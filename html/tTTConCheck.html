@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Final Project</title>
+	<link rel="stylesheet" href = "../css/testCss.css">
+	<link rel="stylesheet" href = "../css/main.css">
+  </head>
+  <body>
+    <a href="../index.html">Home</a>
+	<table border = "1">
+		<tr>
+			<td id = "0", class = "empty">  </td>
+			<td id = "1", class = "empty">  </td>
+			<td id = "2", class = "empty">  </td>
+		</tr>
+		<tr>
+			<td id = "3", class = "empty">  </td>
+			<td id = "4", class = "empty">  </td>
+			<td id = "5", class = "empty">  </td>
+		</tr>
+		<tr>
+			<td id = "6", class = "empty">  </td>
+			<td id = "7", class = "empty">  </td>
+			<td id = "8", class = "empty">  </td>
+		</tr>
+	</table>
+	<p id = "info", class="banner">
+		Winner info goes here
+	</p>
+	<script>
+		function getEventTarget(e){
+			e = e || window.event;
+   			return e.target || e.srcElement; 
+		}
+		
+		function testChangeColor(target, playerFlag){
+			if (playerFlag == 0){
+				target.innerHTML = "X";
+				target.classList.add("player1")
+				target.classList.remove("empty")
+			}
+			else {
+				target.innerHTML = "O";
+				target.classList.add("player2")
+				target.classList.remove("empty")
+			}
+			
+			return;
+		}
+		
+		function checkWinManage(playerFlag, target, cells){//manages win checks
+			//Always send to row, column check
+			//Send to diagonal if in corner or center
+			var lastCell = target.id;
+			var winCount = 0. //ways player won
+			if (playerFlag == 0){
+				playerID = "player1";
+			} else {
+				playerID = "player2";
+			}
+			if (winRow(playerID, lastCell, cells)){
+				winCount = winCount + 1;
+			}
+			if (winColumn(playerID, lastCell, cells)){
+				winCount = winCount + 1;
+			}
+			if(lastCell == 0 || lastCell == 2 || lastCell == 4 || lastCell == 6 || lastCell == 8){
+				winCount = winCount + winDiagonal(playerID, lastCell, cells);
+			}
+			if (winCount > 0){
+				return true;
+			}
+			else return false;
+		}
+		
+		function winRow(playerID, targetCell, cells){ //row check => +1
+				var startCell;
+				if (targetCell < 3){
+					startCell = 0;
+				} else if (targetCell > 2 && targetCell < 6){
+					startCell = 3;
+				} else {
+					startCell = 6;
+				}
+				var i = 0;
+				var workCell = startCell;
+				for (i; i < 3; i++){
+					if (!cells[workCell].classList.contains(playerID)){
+						return false;
+					}
+					workCell = workCell + 1;
+				}
+				return true;
+		}
+		
+		function winColumn(playerID, targetCell, cells){ // column check => +3
+				var startCell = targetCell % 3;
+				var i = 0;
+				var workCell = startCell;
+				for (i; i < 3; i++){
+					if (!cells[workCell].classList.contains(playerID)){
+						return false;
+					}
+					workCell = workCell + 3;
+				}
+				
+				return true;
+		}
+		
+		
+		function winDiagonal(playerID, targetCell, cells){
+			var diagonalCount = 0;
+			//if 0,4,8
+			if (targetCell == 0 || targetCell == 4 || targetCell == 8){
+				if (cells[0].classList.contains(playerID) && 
+				cells[4].classList.contains(playerID) && cells[8].classList.contains(playerID)){
+						diagonalCount = diagonalCount + 1;
+				}
+				
+			}
+			//if 2,4,6
+			if (targetCell == 2 || targetCell == 4 || targetCell == 6){
+				if (cells[2].classList.contains(playerID) && 
+				cells[4].classList.contains(playerID) && cells[6].classList.contains(playerID)){
+						diagonalCount = diagonalCount + 1;
+				}
+			}
+			return diagonalCount;
+		}
+		
+		
+		
+		var list = document.getElementsByTagName('table')[0];
+		var cells = document.getElementsByTagName('td');
+		var playerFlag = 1;
+		var movesMade = 0; //Prevents game from making excessive checks
+		var winFlag = false;
+		list.onclick = function(event) {
+			if (playerFlag == 0){ //X
+				playerFlag = 1;
+			}
+			else if (playerFlag == 1){ //O
+				playerFlag = 0;
+			}
+    		var target = getEventTarget(event);
+			if (!winFlag){
+				if (!target.classList.contains("empty")){ //Can't play in taken spot
+					document.getElementById("info").innerHTML = "Spot is taken, try again";
+					if (playerFlag == 0){
+						playerFlag = 1;
+					}
+					else if (playerFlag == 1){
+						playerFlag = 0;
+					}
+				}	
+				else {
+					document.getElementById("info").innerHTML = "";
+					testChangeColor(target, playerFlag);
+					movesMade = movesMade + 1;
+				}
+				if (movesMade >= 5){//first point where someone could win
+					winFlag = checkWinManage(playerFlag, target, cells);
+					if (winFlag) document.getElementById("info").innerHTML = "Player " + (playerFlag + 1) + " wins";
+				}
+				if (movesMade == 9 && !winFlag){//Is full, no one won
+					document.getElementById("info").innerHTML = "Stalemate";
+				}	
+			}
+		}
+	
+	
+	</script>
+  </body>
+</html>

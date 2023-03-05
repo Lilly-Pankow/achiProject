@@ -1,0 +1,45 @@
+table{
+	border-collapse: collapse;
+	background-image: url(../Images/AchiBoardCropped.png);
+}
+
+
+td{
+	height: 145px;
+	width: 145px;
+	overflow:hidden;
+}
+
+.empty{
+	background-image: none;
+}
+
+
+img{
+	max-width: 100%;
+    max-height: 100%;
+}
+
+.player1{
+	background-image: url(../Images/Player1Piece.png);
+	
+}
+
+.player2{
+	background-image: url(../Images/Player2Piece.png);
+	
+}
+
+.selected{
+	
+}
+
+.blockedSelection{
+	
+}
+
+.banner{
+	font-family: "";
+	color: DarkSlateGray;
+	
+}

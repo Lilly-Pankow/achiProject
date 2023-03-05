@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Final Project</title>
+	<link rel="stylesheet" href = "../css/achi.css">
+	<link rel="stylesheet" href = "../css/main.css">
+  </head>
+  <body>
+    <a href="../index.html">Home</a>
+	<table style = "background-image: url(../Images/AchiBoardCropped.png);">
+		<tr>
+			<td id = "0", class = "empty">  </td>
+			<td id = "1", class = "empty">  </td>
+			<td id = "2", class = "empty">  </td>
+		</tr>
+		<tr>
+			<td id = "3", class = "empty">  </td>
+			<td id = "4", class = "empty">  </td>
+			<td id = "5", class = "empty">  </td>
+		</tr>
+		<tr>
+			<td id = "6", class = "empty">  </td>
+			<td id = "7", class = "empty">  </td>
+			<td id = "8", class = "empty">  </td>
+		</tr>
+	</table>
+	<p class = "banner">Player 1 is Blue and Player 2 is Green</p>
+	<p id = "info", class="banner">
+	</p>
+	<p id = "activePlayer", class="banner">
+		
+	</p>
+	<script>
+		function getEventTarget(e){
+			e = e || window.event;
+   			return e.target || e.srcElement; 
+		}
+		
+		function testChangeColor(target, playerFlag){
+			if (playerFlag == 0){
+				target.classList.add("player1")
+				//target.innerHTML = "<img src=\"../Images/Player1Piece.png\"\">";
+				target.classList.remove("empty")
+			}
+			else {
+				target.classList.add("player2")
+				target.classList.remove("empty")
+				//target.innerHTML = "<img src=\"../Images/Player2Piece.png\"\">";
+			}
+			
+			return;
+		}
+		
+		function checkWinManage(playerFlag, target, cells){//manages win checks
+			//Always send to row, column check
+			//Send to diagonal if in corner or center
+			var lastCell = target.id;
+			var winCount = 0. //ways player won
+			if (playerFlag == 0){
+				playerID = "player1";
+			} else {
+				playerID = "player2";
+			}
+			if (winRow(playerID, lastCell, cells)){
+				winCount = winCount + 1;
+			}
+			if (winColumn(playerID, lastCell, cells)){
+				winCount = winCount + 1;
+			}
+			if(lastCell == 0 || lastCell == 2 || lastCell == 4 || lastCell == 6 || lastCell == 8){
+				winCount = winCount + winDiagonal(playerID, lastCell, cells);
+			}
+			if (winCount > 0){
+				return true;
+			}
+			else return false;
+		}
+		
+		function winRow(playerID, targetCell, cells){ //row check => +1
+				var startCell;
+				if (targetCell < 3){
+					startCell = 0;
+				} else if (targetCell > 2 && targetCell < 6){
+					startCell = 3;
+				} else {
+					startCell = 6;
+				}
+				var i = 0;
+				var workCell = startCell;
+				for (i; i < 3; i++){
+					if (!cells[workCell].classList.contains(playerID)){
+						return false;
+					}
+					workCell = workCell + 1;
+				}
+				return true;
+		}
+		
+		function winColumn(playerID, targetCell, cells){ // column check => +3
+				var startCell = targetCell % 3;
+				var i = 0;
+				var workCell = startCell;
+				for (i; i < 3; i++){
+					if (!cells[workCell].classList.contains(playerID)){
+						return false;
+					}
+					workCell = workCell + 3;
+				}
+				
+				return true;
+		}
+		
+		
+		function winDiagonal(playerID, targetCell, cells){
+			var diagonalCount = 0;
+			//if 0,4,8
+			if (targetCell == 0 || targetCell == 4 || targetCell == 8){
+				if (cells[0].classList.contains(playerID) && 
+				cells[4].classList.contains(playerID) && cells[8].classList.contains(playerID)){
+						diagonalCount = diagonalCount + 1;
+				}
+				
+			}
+			//if 2,4,6
+			if (targetCell == 2 || targetCell == 4 || targetCell == 6){
+				if (cells[2].classList.contains(playerID) && 
+				cells[4].classList.contains(playerID) && cells[6].classList.contains(playerID)){
+						diagonalCount = diagonalCount + 1;
+				}
+			}
+			return diagonalCount;
+		}
+		
+		//shifting functions
+		
+		function canPieceMove(selectedCell, cells){
+			var cellNum = selectedCell.id;
+			var canMove = false;
+			switch (cellNum) {
+				case "0": if (cells[1].classList.contains("empty") || cells[3].classList.contains("empty") 
+						   || cells[4].classList.contains("empty")){
+							canMove = true;
+						}
+					break;
+				case "1": if (cells[0].classList.contains("empty") || cells[2].classList.contains("empty") 
+						   || cells[4].classList.contains("empty"))
+							canMove = true;
+					break;
+				case "2": if (cells[1].classList.contains("empty") || cells[5].classList.contains("empty") 
+						   || cells[4].classList.contains("empty")) 
+							canMove = true;
+					break;
+				case "3": if (cells[0].classList.contains("empty") || cells[6].classList.contains("empty") 
+						   || cells[4].classList.contains("empty"))
+							canMove = true;
+					break;
+				case "4": for (var i = 0; i < 9; i++){
+						if (cells[i].classList.contains("empty")) canMove = true; //It does check 4, but it's easier not to add more code
+					}
+					break;
+				case "5": if (cells[2].classList.contains("empty") || cells[8].classList.contains("empty") 
+						   || cells[4].classList.contains("empty"))
+							canMove = true;
+					break;
+				case "6": if (cells[3].classList.contains("empty") || cells[7].classList.contains("empty") 
+					       || cells[4].classList.contains("empty")) 
+							canMove = true;
+					break;
+				case "7": if (cells[6].classList.contains("empty") || cells[4].classList.contains("empty")
+						   || cells[8].classList.contains("empty"))
+							canMove = true;
+					break;
+				case "8": if (cells[5].classList.contains("empty") || cells[7].classList.contains("empty") 
+						   || cells[4].classList.contains("empty")) 
+							canMove = true;
+					break;
+				}
+				return canMove;
+				
+			
+		}
+		
+		function checkForBlockade(playerID, cells){//return false if player has pieces that can move
+			var possibleMoves = 0;
+			for (var i = 0; i < 9; i++){
+				if (cells[i].classList.contains(playerID)){
+					if(canPieceMove(cells[i], cells)){
+						possibleMoves = possibleMoves + 1;
+					}
+				}
+			}
+			if (possibleMoves > 0){
+				return false;
+			} else {
+				return true;
+			}
+			
+		}
+		
+		function pieceSelect(target, cells){
+			for (var i = 0; i < 9; i++){
+				cells[i].classList.remove("selected");
+				cells[i].classList.remove("blockedSelection");
+				cells[i].innerHTML = "";
+			}
+			if (canPieceMove(target, cells)){
+				target.classList.add("selected");
+				target.innerHTML = "<img src=\"../Images/MoveableHL.png\"\">";
+			} else {
+				target.classList.add("blockedSelection");
+				target.innerHTML = "<img src=\"../Images/BlockedHL.png\"\" align=\"right\">";
+				
+			}
+			
+		}
+		function movePiece(target, toMove, playerID){
+
+			toMove.classList.remove(playerID);
+			toMove.classList.add("empty");
+			
+			target.classList.add(playerID);
+			target.classList.remove("empty");
+			
+			for (var i = 0; i < 9; i++){
+				cells[i].classList.remove("selected");
+				cells[i].classList.remove("blockedSelection");
+				cells[i].innerHTML = "";
+			}
+			
+		}
+		
+		
+		//-------------------------------------------------------;
+		var list = document.getElementsByTagName('table')[0];
+		var cells = document.getElementsByTagName('td');
+		var playerFlag = 0;
+		var movesMade = 0; //Prevents game from making excessive checks
+		var winFlag = false;
+		var movingPiece = null;
+		document.getElementById("activePlayer").innerHTML = "Player " + (playerFlag+1) + "'s turn";
+		list.onclick = function(event) {
+    		var target = getEventTarget(event);
+			if (!winFlag && movesMade < 8){
+				if (!target.classList.contains("empty")){ //Can't play in taken spot
+					document.getElementById("info").innerHTML = "Spot is taken, try again";
+				}	
+				else {
+					document.getElementById("info").innerHTML = "";
+					testChangeColor(target, playerFlag);
+					movesMade = movesMade + 1;
+					if (movesMade >= 5){//first point where someone could win					
+						winFlag = checkWinManage(playerFlag, target, cells);
+						if (winFlag) {
+							 document.getElementById("info").innerHTML = "Player " + (playerFlag + 1) + " wins";
+							 document.getElementById("activePlayer").innerHTML = "";
+						}
+					}
+					if (playerFlag == 0){ //X
+						playerFlag = 1;
+					}
+					else if (playerFlag == 1){ //O
+						playerFlag = 0;
+					}
+					if (!winFlag) document.getElementById("activePlayer").innerHTML = "Player " + (playerFlag+1) + "'s turn";
+				}	
+			}
+			//Piece shifting
+			
+			if (!winFlag && movesMade >= 8){
+				var playerID = "player" + (playerFlag + 1);
+				//Check for blockade here for active player.  
+				//I have no idea if this works after pieces have been moved around as I couldnt't get it to that state
+				if (checkForBlockade("player1", cells)){
+					document.getElementById("info").innerHTML = "Player 1 is blocked, Player 2 wins";
+					winFlag = true;
+				}
+				if (checkForBlockade("player2", cells)){
+					document.getElementById("info").innerHTML = "Player 2 is blocked, Player 1 wins";
+					winFlag = true;
+				}
+				if (target.classList.contains(playerID)){
+					pieceSelect(target, cells);
+					
+					if (canPieceMove(target, cells)){
+						movingPiece = target;
+						//document.getElementById("info").innerHTML = movingPiece.id;
+					}
+				} else if (target.classList.contains("empty") && canPieceMove(movingPiece, cells)){
+					//document.getElementById("info").innerHTML = "test";
+					movePiece(target, movingPiece, playerID);
+					winFlag = checkWinManage(playerFlag, target, cells);
+					if (winFlag) {
+							 document.getElementById("info").innerHTML = "Player " + (playerFlag + 1) + " wins";
+							 document.getElementById("activePlayer").innerHTML = "";
+					} else {//switch turns
+						if (playerFlag == 0){ //X
+							playerFlag = 1;
+						}
+						else if (playerFlag == 1){ //O
+							playerFlag = 0;
+						}
+					//	if (!winFlag) document.getElementById("activePlayer").innerHTML = "Player " + (playerFlag+1) + "'s turn";
+					}
+					
+				}
+				
+			}	
+		}//End of onclick event
+	
+	</script>
+  </body>
+</html>

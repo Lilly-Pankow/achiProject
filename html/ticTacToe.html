@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Final Project</title>
+	<link rel="stylesheet" href = "../css/testCss.css">
+	<link rel="stylesheet" href = "../css/main.css">
+  </head>
+  <body>
+    <a href="../index.html">Home</a>
+	<table border = "1">
+		<tr>
+			<td id = "upL", class = "empty"> Z </td>
+			<td id = "upM", class = "empty"> Z </td>
+			<td id = "upR", class = "empty"> Z </td>
+		</tr>
+		<tr>
+			<td id = "miL", class = "empty"> Z </td>
+			<td id = "miM", class = "empty"> Z </td>
+			<td id = "miR", class = "empty"> Z </td>
+		</tr>
+		<tr>
+			<td id = "loL", class = "empty"> Z </td>
+			<td id = "loM", class = "empty"> Z </td>
+			<td id = "loR", class = "empty"> Z </td>
+		</tr>
+	</table>
+	<script>
+		function getEventTarget(e){
+			e = e || window.event;
+   			return e.target || e.srcElement; 
+		}
+		
+		function testChangeColor(target, playerFlag){
+			if (playerFlag == 0){
+				target.innerHTML = "X";
+				target.classList.add("player1")
+				target.classList.remove("empty")
+			}
+			else {
+				target.innerHTML = "O";
+				target.classList.add("player2")
+				target.classList.remove("empty")
+			}
+			return;
+		}
+		var list = document.getElementsByTagName('table')[0];
+		var playerFlag = 1;
+		list.onclick = function(event) {
+			if (playerFlag == 0){ //X
+				playerFlag = 1;
+			}
+			else if (playerFlag == 1){ //O
+				playerFlag = 0;
+			}
+    		var target = getEventTarget(event);
+			if (target.innerHTML === "X" || target.innerHTML === "O"){ //Can't play in taken spot
+				if (playerFlag == 0){
+					playerFlag = 1;
+				}
+				else if (playerFlag == 1){
+					playerFlag = 0;
+				}
+			}	
+			else {
+				testChangeColor(target, playerFlag);
+			}
+			
+		}
+	
+	
+	</script>
+  </body>
+</html>
